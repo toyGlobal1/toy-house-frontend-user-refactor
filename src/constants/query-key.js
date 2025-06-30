@@ -1,0 +1,9 @@
+export const PRODUCT_KEY = "products";
+export const PRODUCT_INVENTORY_KEY = "productInventory";
+export const PRODUCT_INVENTORY_IMAGES_KEY = "productInventoryImages";
+export const CATEGORY_KEY = "categories";
+export const BRAND_KEY = "brands";
+export const COLOR_KEY = "colors";
+export const MATERIAL_KEY = "materials";
+export const REVIEW_KEY = "reviews";
+export const ORDER_KEY = "orders";
