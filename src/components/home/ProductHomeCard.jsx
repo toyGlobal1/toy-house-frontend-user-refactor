@@ -4,7 +4,7 @@ export function ProductHomeCard({ product }) {
       {/* Product Image */}
       <div className="xs:h-[120px] h-[90px] w-full overflow-hidden rounded-t-lg sm:h-[150px] md:h-[170px] lg:h-[200px] xl:h-[220px]">
         <img
-          src={product.display_image_url}
+          src={product.display_image_url || null}
           alt={product?.product_name}
           loading="lazy"
           className="h-full w-full rounded-t-lg object-cover transition-transform duration-300 group-hover:scale-105"

@@ -1,7 +1,7 @@
 import { Card, CardBody, CardHeader } from "@heroui/react";
 import { Link } from "react-router";
-import loginBanner from "../assets/auth/sign_in.webp";
-import { LoginForm } from "../components/auth/LoginForm";
+import loginBanner from "../../assets/auth/sign_in.webp";
+import { LoginForm } from "../../components/auth/LoginForm";
 
 export default function LoginPage() {
   return (

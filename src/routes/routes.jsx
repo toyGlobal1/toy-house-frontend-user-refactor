@@ -1,10 +1,19 @@
 import { createBrowserRouter } from "react-router";
 import RootLayout from "../layouts/RootLayout";
+import AboutPage from "../pages/AboutPage";
+import AgeGroupProductsPage from "../pages/AgeGroupProductsPage";
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
+import LoginPage from "../pages/auth/LoginPage";
+import RegisterPage from "../pages/auth/RegisterPage";
+import BrandProductsPage from "../pages/BrandProductsPage";
+import CategoryProductsPage from "../pages/CategoryProductsPage";
 import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/LoginPage";
+import ProductDetailsPage from "../pages/ProductDetailsPage";
 import ProductPage from "../pages/ProductPage";
-import RegisterPage from "../pages/RegisterPage";
+import ProfilePage from "../pages/ProfilePage";
+import AuthRoute from "./AuthRoute";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -13,9 +22,26 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: "", Component: HomePage },
-      { path: "register", Component: RegisterPage },
-      { path: "login", Component: LoginPage },
+      {
+        path: "",
+        element: <PrivateRoute />,
+        children: [{ path: "profile", Component: ProfilePage }],
+      },
+      {
+        path: "",
+        element: <AuthRoute />,
+        children: [
+          { path: "login", Component: LoginPage },
+          { path: "register", Component: RegisterPage },
+          { path: "forgot-password", Component: ForgotPasswordPage },
+        ],
+      },
       { path: "products", Component: ProductPage },
+      { path: "products/:id", Component: ProductDetailsPage },
+      { path: "category/:id", Component: CategoryProductsPage },
+      { path: "brand/:id", Component: BrandProductsPage },
+      { path: "age-group", Component: AgeGroupProductsPage },
+      { path: "about", Component: AboutPage },
     ],
   },
 ]);

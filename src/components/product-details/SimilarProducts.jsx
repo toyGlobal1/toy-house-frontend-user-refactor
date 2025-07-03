@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { Link } from "react-router";
@@ -6,16 +6,18 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { getAllFeaturedProducts } from "../../service/product.service";
-import { ProductHomeCard } from "./ProductHomeCard";
+import { getAllProductsByCategory } from "../../service/product.service";
+import { ProductHomeCard } from "../home/ProductHomeCard";
 
-export function FeaturedCollection() {
-  const { data } = useSuspenseQuery({
-    queryKey: ["featuredProducts"],
-    queryFn: getAllFeaturedProducts,
+export function SimilarProducts({ productId, categoryId }) {
+  const { data, isFetching } = useQuery({
+    queryKey: ["categoryProducts", categoryId],
+    queryFn: () => getAllProductsByCategory(categoryId),
   });
 
-  const featuredProducts = data.featured_products || [];
+  const products = data?.category_products || [];
+
+  const similarProducts = products.filter((item) => item.id !== productId);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalSlides, setTotalSlides] = useState(0);
@@ -30,11 +32,13 @@ export function FeaturedCollection() {
     }
   }, []);
 
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="w-full space-y-8 bg-[#f5f5f5] py-10 sm:space-y-10 sm:py-14 md:space-y-14 md:py-20 dark:bg-[#f5f5f5]">
-      <h2 className="font-poppins mb-10 text-center text-xl font-bold md:text-2xl lg:text-4xl dark:text-black">
-        Featured Collection
-      </h2>
+    <div>
+      <h2 className="mb-10 text-xl font-bold md:text-2xl dark:text-black">You May Also Like</h2>
 
       <div className="relative mx-auto w-5/6 lg:w-11/12">
         <Swiper
@@ -55,7 +59,7 @@ export function FeaturedCollection() {
           }}
           modules={[Navigation]}
           className="mySwiper">
-          {featuredProducts?.map((item) => (
+          {similarProducts?.map((item) => (
             <SwiperSlide key={item.id} className="mb-2 rounded-lg shadow">
               <Link to={`/products/${item.id}`}>
                 <ProductHomeCard product={item} />

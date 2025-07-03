@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
 
 const shopItems = [
   {
@@ -36,29 +36,15 @@ const shopItems = [
 ];
 
 export function ShopByAge() {
-  // Helper function to get query parameters from URL
-  const useQuery = () => {
-    return new URLSearchParams(useLocation().search);
-  };
-
-  const query = useQuery();
-  const minAge = parseInt(query.get("minAge")) || 0;
-  const maxAge = parseInt(query.get("maxAge")) || Infinity;
-
-  // Corrected filtering logic: Ensure items overlap with the query range
-  const filteredShopItems = shopItems.filter(
-    (item) => item.maxAge >= minAge && item.minAge <= maxAge
-  );
-
   return (
     <div className="mx-auto w-11/12">
       <h1 className="font-poppins text-center text-2xl font-bold sm:text-3xl md:text-4xl">
         Shop by Age
       </h1>
       <div className="mt-10 grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-4 lg:gap-5">
-        {filteredShopItems.map((item) => (
+        {shopItems.map((item) => (
           <Link
-            to={`/ageCategory/${item._id}?minAge=${item.minAge}&maxAge=${item.maxAge}`}
+            to={`/age-group?minAge=${item.minAge}&maxAge=${item.maxAge}`}
             title={`View details for ${item.title}`}
             aria-label={`View details for ${item.title}`}
             key={item._id}

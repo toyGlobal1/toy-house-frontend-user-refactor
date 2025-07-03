@@ -7,3 +7,5 @@ export const COLOR_KEY = "colors";
 export const MATERIAL_KEY = "materials";
 export const REVIEW_KEY = "reviews";
 export const ORDER_KEY = "orders";
+export const USER_KEY = "user";
+export const CART_KEY = "cart";

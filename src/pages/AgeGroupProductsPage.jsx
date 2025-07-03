@@ -1,25 +1,31 @@
 import { Button, Select, SelectItem, Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router";
 import { ProductCard } from "../components/product/ProductCard";
 import { ProductFilter } from "../components/product/ProductFilter";
 import { ProductFilterDrawer } from "../components/product/ProductFilterDrawer";
-import { PRODUCT_KEY } from "../constants/query-key";
-import { getAllProducts } from "../service/product.service";
+import { getAllProductsByAgeGroup } from "../service/product.service";
 
-export default function ProductPage() {
+export default function AgeGroupProductsPage() {
+  const [searchParams] = useSearchParams();
+  const minAge = parseInt(searchParams.get("minAge")) || 0;
+  const maxAge = parseInt(searchParams.get("maxAge")) || Infinity;
+
   const [showFilter, setShowFilter] = useState(true);
   const [sortOrder, setSortOrder] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState([0, Infinity]);
-  const [selectedAgeGroup, setSelectedAgeGroup] = useState([0, Infinity]);
 
-  const { data, isFetching } = useQuery({ queryKey: [PRODUCT_KEY], queryFn: getAllProducts });
+  const { data, isFetching } = useQuery({
+    queryKey: ["ageGroupProducts", minAge, maxAge],
+    queryFn: () => getAllProductsByAgeGroup(minAge, maxAge),
+  });
 
   const filteredProducts = useMemo(() => {
-    const products = data?.products || [];
+    const products = data?.age_products || [];
     let filtered = products.filter((item) => {
       // Match brand if a brand is selected, otherwise allow all
       const matchesBrand = !selectedBrand || item?.brand_name === selectedBrand;
@@ -32,18 +38,13 @@ export default function ProductPage() {
         item?.selling_price >= selectedPriceRange[0] &&
         item?.selling_price <= selectedPriceRange[1];
 
-      // Match age group if age is selected, otherwise allow all
-      const matchesAge =
-        item?.minimum_age_range >= selectedAgeGroup[0] &&
-        item?.maximum_age_range <= selectedAgeGroup[1];
-
       // Match search term in product name
       const matchesSearch =
         searchTerm === "" ||
         (item?.product_name || "").toLowerCase().includes(searchTerm.toLowerCase());
 
       // Only return products that match all criteria
-      return matchesBrand && matchesCategory && matchesPrice && matchesAge && matchesSearch;
+      return matchesBrand && matchesCategory && matchesPrice && matchesSearch;
     });
 
     // Sorting
@@ -54,15 +55,7 @@ export default function ProductPage() {
     }
 
     return filtered;
-  }, [
-    data,
-    searchTerm,
-    selectedBrand,
-    selectedCategory,
-    selectedAgeGroup,
-    selectedPriceRange,
-    sortOrder,
-  ]);
+  }, [data, searchTerm, selectedBrand, selectedCategory, selectedPriceRange, sortOrder]);
 
   return (
     <div className="container my-5">
@@ -75,16 +68,15 @@ export default function ProductPage() {
       </div>
       <div className="flex justify-between">
         <ProductFilterDrawer
+          showAgeGroup={false}
           searchTerm={searchTerm}
           selectedCategory={selectedCategory}
           selectedBrand={selectedBrand}
           selectedPriceRange={selectedPriceRange}
-          selectedAgeGroup={selectedAgeGroup}
           onSearchChange={setSearchTerm}
           onCategoryChange={setSelectedCategory}
           onBrandChange={setSelectedBrand}
           onPriceRangeChange={setSelectedPriceRange}
-          onAgeGroupChange={setSelectedAgeGroup}
         />
         <Button size="sm" onPress={() => setShowFilter(!showFilter)} className="hidden md:block">
           {showFilter ? "Hide Filters" : "Show Filters"}
@@ -106,16 +98,15 @@ export default function ProductPage() {
         {showFilter && (
           <div className="hidden md:block">
             <ProductFilter
+              showAgeGroup={false}
               searchTerm={searchTerm}
               selectedCategory={selectedCategory}
               selectedBrand={selectedBrand}
               selectedPriceRange={selectedPriceRange}
-              selectedAgeGroup={selectedAgeGroup}
               onSearchChange={setSearchTerm}
               onCategoryChange={setSelectedCategory}
               onBrandChange={setSelectedBrand}
               onPriceRangeChange={setSelectedPriceRange}
-              onAgeGroupChange={setSelectedAgeGroup}
             />
           </div>
         )}

@@ -6,6 +6,10 @@ export const getAllReviews = async () => {
   );
 };
 
+export const getReviewsByProductId = async (productId) => {
+  return await axiosInstance.get(`/api/v1/open/get/review/${productId}?request-id=1234`);
+};
+
 export const getTopReviews = async () => {
   return await axiosInstance.get("/api/v1/open/get/top/reviews?request-id=1234");
 };

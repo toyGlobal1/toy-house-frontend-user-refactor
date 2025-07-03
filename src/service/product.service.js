@@ -1,9 +1,7 @@
 import { axiosInstance } from "../lib/axios.config";
 
 export const getAllProducts = async () => {
-  return await axiosInstance.get(
-    "/api/v1/open/products/get/products/for-dashboard?page-number=0&page-size=1000&request-id=1212"
-  );
+  return await axiosInstance.get("/api/v1/open/products/get/all?page=0&size=5000&request-id=1234");
 };
 
 export const getAllFeaturedProducts = async () => {
@@ -18,21 +16,27 @@ export const getAllNewProducts = async () => {
   );
 };
 
-export const deleteProduct = async (productId) => {
-  return await axiosInstance.delete(`/api/v1/open/products/delete/${productId}?request-id=1234`);
-};
-
-export const changeProductStatus = async (data) => {
-  return await axiosInstance.put(
-    `/api/v1/open/products/change/availability/status?request-id=1234`,
-    data
+export const getAllProductsByCategory = async (categoryId) => {
+  return await axiosInstance.get(
+    `/api/v1/open/products/get/by/category?category-id=${categoryId}&page=0&size=10000&request-id=1234`
   );
 };
 
-export const setFeaturedProduct = async (data) => {
-  return await axiosInstance.put(
-    `/api/v1/open/products/set/featured-product?request-id=1234`,
-    data
+export const getAllProductsByBrand = async (brandId) => {
+  return await axiosInstance.get(
+    `/api/v1/open/products/get/by/brands?brand-id=${brandId}&page=0&size=10000&request-id=1234`
+  );
+};
+
+export const getAllProductsByAgeGroup = async (minAge, maxAge) => {
+  return await axiosInstance.get(
+    `/api/v1/open/products/get/by/age-range?minimum-age-range=${minAge}&maximum-age-range=${maxAge}&page=0&size=10000&request-id=1234`
+  );
+};
+
+export const getProductById = async (id) => {
+  return await axiosInstance.get(
+    `/api/v1/open/products/get/product?product-id=${id}&request-id=1234`
   );
 };
 
@@ -45,26 +49,6 @@ export const getProductInventories = async (productId) => {
 export const getProductDetails = async (productId) => {
   return await axiosInstance.get(
     `/api/v1/open/products/get/product?product-id=${productId}&request-id=1233`
-  );
-};
-
-export const addProductInventory = async (data) => {
-  return await axiosInstance.post(
-    `/api/v1/admin/product/inventory/upload/inventory?request-id=1234`,
-    data
-  );
-};
-
-export const updateProductInventory = async (data) => {
-  return await axiosInstance.put(
-    `/api/v1/admin/product/inventory/update/inventory?request-id=1234`,
-    data
-  );
-};
-
-export const deleteProductInventory = async (inventoryId) => {
-  return await axiosInstance.delete(
-    `/api/v1/admin/product/inventory/delete/${inventoryId}?request-id=1234`
   );
 };
 

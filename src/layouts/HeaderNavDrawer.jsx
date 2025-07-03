@@ -1,5 +1,13 @@
-import { Spinner } from "@heroui/react";
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  useDisclosure,
+} from "@heroui/react";
 import { useQueries } from "@tanstack/react-query";
+import { LuMenu } from "react-icons/lu";
 import { Link } from "react-router";
 import {
   NavigationMenu,
@@ -14,7 +22,27 @@ import { BRAND_KEY, CATEGORY_KEY } from "../constants/query-key";
 import { getAllBrands } from "../service/brand.service";
 import { getAllCategories } from "../service/category.service";
 
-export function HeaderNavigationMenu() {
+export function HeaderNavDrawer() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  return (
+    <>
+      <Button size="sm" isIconOnly onPress={onOpen} className="md:hidden">
+        <LuMenu className="size-4" />
+      </Button>
+      <Drawer isOpen={isOpen} onOpenChange={onOpenChange} placement="left">
+        <DrawerContent>
+          <DrawerHeader className="flex flex-col gap-1">Filter Products</DrawerHeader>
+          <DrawerBody>
+            <HeaderNavigationMenu />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    </>
+  );
+}
+
+function HeaderNavigationMenu() {
   const [
     { data: categoryData, isFetching: isFetchingCategories },
     { data: brandData, isFetching: isFetchingBrands },
@@ -29,8 +57,8 @@ export function HeaderNavigationMenu() {
   const brands = brandData?.brands;
 
   return (
-    <NavigationMenu viewport={false} className="hidden md:block">
-      <NavigationMenuList>
+    <NavigationMenu viewport={false}>
+      <NavigationMenuList className="flex-col">
         <NavigationMenuItem>
           <NavigationMenuTrigger className="bg-transparent">Category</NavigationMenuTrigger>
           <NavigationMenuContent>

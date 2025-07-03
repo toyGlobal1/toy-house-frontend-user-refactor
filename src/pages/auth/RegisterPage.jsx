@@ -1,7 +1,7 @@
 import { Card, CardBody, CardHeader } from "@heroui/react";
 import { Link } from "react-router";
-import registerBanner from "../assets/auth/sign_up.webp";
-import { RegisterForm } from "../components/auth/RegisterForm";
+import registerBanner from "../../assets/auth/sign_up.webp";
+import { RegisterForm } from "../../components/auth/RegisterForm";
 
 export default function RegisterPage() {
   return (

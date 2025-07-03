@@ -11,18 +11,16 @@ export function RegisterForm() {
   const navigate = useNavigate();
   const { control, handleSubmit } = useForm({
     resolver: zodResolver(registerZodSchema),
-    defaultValues: { username: "", name: "", phone_number: "", password: "" },
+    defaultValues: { name: "", email: "", phone_number: "", password: "" },
   });
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: register,
-    onSuccess: (data) => {
-      // const accessToken = data?.accessToken;
-      console.log(data);
-      navigate("/");
+    onSuccess: () => {
+      navigate("/login");
       addToast({
         title: "Success",
-        description: "Registration successful",
+        description: "Congrats! Registration successful",
         color: "success",
       });
     },
@@ -36,15 +34,15 @@ export function RegisterForm() {
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
-    // await mutateAsync(data);
+    const payload = { ...data, username: data.phone_number };
+    await mutateAsync(payload);
   };
 
   return (
     <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
-        name="username"
+        name="phone_number"
         render={({ field, fieldState: { error, invalid } }) => (
           <Input
             {...field}

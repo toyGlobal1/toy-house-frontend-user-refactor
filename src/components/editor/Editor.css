@@ -1,0 +1,37 @@
+.controls {
+  display: flex;
+  border: 1px solid #ccc;
+  border-top: 0;
+  padding: 10px;
+}
+
+.controls-right {
+  margin-left: auto;
+}
+
+.state {
+  margin: 10px 0;
+  font-family: monospace;
+}
+
+.state-title {
+  color: #999;
+  text-transform: uppercase;
+}
+
+.ql-container {
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  height: 200px !important;
+}
+.ql-toolbar {
+  border: none !important;
+  border-bottom: 1px solid #ccc !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.ql-disabled {
+  height: 100% !important;
+}

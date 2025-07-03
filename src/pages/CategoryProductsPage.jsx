@@ -1,31 +1,31 @@
 import { Button, Select, SelectItem, Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { useParams } from "react-router";
 import { ProductCard } from "../components/product/ProductCard";
 import { ProductFilter } from "../components/product/ProductFilter";
 import { ProductFilterDrawer } from "../components/product/ProductFilterDrawer";
-import { PRODUCT_KEY } from "../constants/query-key";
-import { getAllProducts } from "../service/product.service";
+import { getAllProductsByCategory } from "../service/product.service";
 
-export default function ProductPage() {
+export default function CategoryProductsPage() {
+  const { id } = useParams();
   const [showFilter, setShowFilter] = useState(true);
   const [sortOrder, setSortOrder] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState([0, Infinity]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState([0, Infinity]);
 
-  const { data, isFetching } = useQuery({ queryKey: [PRODUCT_KEY], queryFn: getAllProducts });
+  const { data, isFetching } = useQuery({
+    queryKey: ["categoryProducts", id],
+    queryFn: () => getAllProductsByCategory(id),
+  });
 
   const filteredProducts = useMemo(() => {
-    const products = data?.products || [];
+    const products = data?.category_products || [];
     let filtered = products.filter((item) => {
       // Match brand if a brand is selected, otherwise allow all
       const matchesBrand = !selectedBrand || item?.brand_name === selectedBrand;
-
-      // Match category if a category is selected, otherwise allow all
-      const matchesCategory = !selectedCategory || item?.category_name === selectedCategory;
 
       // Match price range
       const matchesPrice =
@@ -43,7 +43,7 @@ export default function ProductPage() {
         (item?.product_name || "").toLowerCase().includes(searchTerm.toLowerCase());
 
       // Only return products that match all criteria
-      return matchesBrand && matchesCategory && matchesPrice && matchesAge && matchesSearch;
+      return matchesBrand && matchesPrice && matchesAge && matchesSearch;
     });
 
     // Sorting
@@ -54,34 +54,25 @@ export default function ProductPage() {
     }
 
     return filtered;
-  }, [
-    data,
-    searchTerm,
-    selectedBrand,
-    selectedCategory,
-    selectedAgeGroup,
-    selectedPriceRange,
-    sortOrder,
-  ]);
+  }, [data, searchTerm, selectedBrand, selectedAgeGroup, selectedPriceRange, sortOrder]);
 
   return (
     <div className="container my-5">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-400">Explore Our Product Collection</h1>
+        <h1 className="text-2xl font-bold text-gray-400">Discover a World of Toys!</h1>
         <p className="mt-2 text-gray-600">
-          Discover the best products that we have to offer. Our collection is curated to provide you
-          with only the finest options.
+          Explore our curated collection of high-quality toys designed to inspire learning and
+          laughter in every child.
         </p>
       </div>
       <div className="flex justify-between">
         <ProductFilterDrawer
+          showCategory={false}
           searchTerm={searchTerm}
-          selectedCategory={selectedCategory}
           selectedBrand={selectedBrand}
           selectedPriceRange={selectedPriceRange}
           selectedAgeGroup={selectedAgeGroup}
           onSearchChange={setSearchTerm}
-          onCategoryChange={setSelectedCategory}
           onBrandChange={setSelectedBrand}
           onPriceRangeChange={setSelectedPriceRange}
           onAgeGroupChange={setSelectedAgeGroup}
@@ -106,13 +97,12 @@ export default function ProductPage() {
         {showFilter && (
           <div className="hidden md:block">
             <ProductFilter
+              showCategory={false}
               searchTerm={searchTerm}
-              selectedCategory={selectedCategory}
               selectedBrand={selectedBrand}
               selectedPriceRange={selectedPriceRange}
               selectedAgeGroup={selectedAgeGroup}
               onSearchChange={setSearchTerm}
-              onCategoryChange={setSelectedCategory}
               onBrandChange={setSelectedBrand}
               onPriceRangeChange={setSelectedPriceRange}
               onAgeGroupChange={setSelectedAgeGroup}

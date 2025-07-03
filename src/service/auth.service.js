@@ -5,5 +5,9 @@ export const login = async (data) => {
 };
 
 export const register = async (data) => {
-  return await axiosInstance.post("/api/v1/open/users/register", data);
+  return await axiosInstance.post("/api/v1/open/users/register?request-id=1234", data);
+};
+
+export const getUserProfile = async () => {
+  return await axiosInstance.get("/api/v1/user/get/profile?request-id=1234");
 };

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Banner } from "../components/home/Banner";
 import { FeaturedCollection } from "../components/home/FeaturedCollection";
 import { NewArrival } from "../components/home/NewArrival";
@@ -12,14 +13,24 @@ export default function HomePage() {
     <div>
       <Banner />
       <div className="relative z-20 space-y-12 pb-20 text-[#3E3E3E] md:space-y-16 lg:space-y-20">
-        <FeaturedCollection />
+        <Suspense fallback={<div>Loading...</div>}>
+          <FeaturedCollection />
+        </Suspense>
         <ShopByAge />
         <Support />
-        <TopBrands />
-        <NewArrival />
-        <TopCategories />
+        <Suspense fallback={<div>Loading...</div>}>
+          <TopBrands />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <NewArrival />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <TopCategories />
+        </Suspense>
       </div>
-      <Testimonial />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Testimonial />
+      </Suspense>
     </div>
   );
 }

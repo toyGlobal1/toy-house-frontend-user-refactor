@@ -2,12 +2,15 @@ import { addToast, Button, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../../hooks/useAuth";
+import { setAuthToken } from "../../lib/auth-token.util";
 import { login } from "../../service/auth.service";
 import { loginZodSchema } from "../../validations/auth.schema";
 import { PasswordInput } from "../ui/PasswordInput";
 
 export function LoginForm() {
+  const { setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { control, handleSubmit } = useForm({
     resolver: zodResolver(loginZodSchema),
@@ -18,6 +21,8 @@ export function LoginForm() {
     mutationFn: login,
     onSuccess: (data) => {
       const accessToken = data?.accessToken;
+      setAuthToken(accessToken);
+      setIsAuthenticated(true);
       navigate("/");
       addToast({
         title: "Success",
@@ -56,22 +61,28 @@ export function LoginForm() {
           />
         )}
       />
-      <Controller
-        control={control}
-        name="password"
-        render={({ field, fieldState: { error, invalid } }) => (
-          <PasswordInput
-            {...field}
-            label="Password"
-            placeholder="Enter your password"
-            labelPlacement="outside"
-            variant="bordered"
-            radius="sm"
-            isInvalid={invalid}
-            errorMessage={error?.message}
-          />
-        )}
-      />
+      <div>
+        <Controller
+          control={control}
+          name="password"
+          render={({ field, fieldState: { error, invalid } }) => (
+            <PasswordInput
+              {...field}
+              label="Password"
+              placeholder="Enter your password"
+              labelPlacement="outside"
+              variant="bordered"
+              radius="sm"
+              isInvalid={invalid}
+              errorMessage={error?.message}
+            />
+          )}
+        />
+        <Link to="/forgot-password" className="mt-2 flex justify-end text-sm text-sky-500">
+          Forgot password?
+        </Link>
+      </div>
+
       <Button
         type="submit"
         color="primary"
