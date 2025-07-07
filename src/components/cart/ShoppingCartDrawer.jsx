@@ -6,6 +6,7 @@ import { RxPlus } from "react-icons/rx";
 import Swal from "sweetalert2";
 
 import { useQuery } from "@tanstack/react-query";
+import { LuX } from "react-icons/lu";
 import { useNavigate } from "react-router";
 import { CART_KEY } from "../../constants/query-key";
 import { useAuth } from "../../hooks/useAuth";
@@ -290,12 +291,12 @@ function ShoppingCart({ onClose }) {
   };
 
   return (
-    <div className="bg-base-200 flex h-screen w-full flex-col justify-between text-[#2F3132] shadow dark:bg-white dark:text-black">
+    <div className="bg-base-200 flex h-screen w-full flex-col justify-between text-[#2F3132] shadow">
       <div className="h-full overflow-y-auto">
         {isAuthenticated ? (
-          cart.length === 0 ? (
+          cart?.length === 0 ? (
             <div className="py-10 text-center">
-              <h2 className="text-lg font-semibold dark:text-black">Your cart is empty</h2>
+              <h2 className="text-lg font-semibold text-gray-500">Your cart is empty</h2>
             </div>
           ) : (
             cart?.items?.map((item) => (
@@ -304,7 +305,7 @@ function ShoppingCart({ onClose }) {
                   <img
                     src={item.image_url || "/default-image.jpg"}
                     alt={item.product_name || "Product Image"}
-                    className="h-[100px] w-[100px] rounded-[15px] bg-white sm:h-[138px] sm:w-[138px]"
+                    className="size-20 rounded-md bg-white"
                   />
                   <div className="flex flex-1 flex-col space-y-3 dark:bg-white dark:text-black">
                     <div className="flex justify-between gap-2">
@@ -360,24 +361,21 @@ function ShoppingCart({ onClose }) {
                         <img
                           src={item.image_url || "/default-image.jpg"}
                           alt={item.product_name || "Product Image"}
-                          className="h-[100px] w-[100px] rounded-[15px] bg-white sm:h-[138px] sm:w-[138px]"
+                          className="size-[100px] rounded-md"
                         />
                         <div className="flex flex-1 flex-col space-y-3 dark:bg-white dark:text-black">
                           <div className="flex justify-between gap-2">
                             <div className="flex flex-col md:px-2">
-                              <h1 className="font-poppins line-clamp-2 text-sm font-semibold md:text-lg">
+                              <h1 className="line-clamp-2 text-sm font-medium">
                                 {item.product_name}
                               </h1>
-                              <h1 className="text-[10px] font-normal md:text-base">
-                                Color: {item?.color_name}
-                              </h1>
+                              <h1 className="text-xs font-normal">Color: {item?.color_name}</h1>
                             </div>
-                            <div>
-                              <MdCancel
-                                onClick={() => handleRemove(item.inventory_id)}
-                                className="cursor-pointer text-xl font-black text-red-500 dark:text-red-500"
-                              />
-                            </div>
+                            <button
+                              className="inline-flex h-fit cursor-pointer items-center justify-center rounded-full bg-danger-300 p-0.5 text-danger-foreground transition-all hover:bg-danger"
+                              onClick={() => handleRemove(item.inventory_id)}>
+                              <LuX className="size-3.5" />
+                            </button>
                           </div>
                           <div className="flex items-center justify-between px-2 dark:bg-white dark:text-black">
                             <div className="flex items-center gap-3 rounded-full bg-white p-[2px]">

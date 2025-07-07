@@ -87,12 +87,7 @@ export function ProductImageGallery({ currentImages, currentVideos, currentQuant
       try {
         const response = await axiosInstance.post(
           "/api/v1/open/calculate-bill?request-id=1234",
-          formattedData,
-          {
-            headers: {
-              Authorization: `Bearer ${user}`, // Adding the Bearer token to the headers
-            },
-          }
+          formattedData
         );
         console.log(response);
         setLoading(false);
@@ -113,24 +108,23 @@ export function ProductImageGallery({ currentImages, currentVideos, currentQuant
           ],
         };
 
+        console.log(formattedData);
+
         try {
-          const response = await axiosInstance.post(
+          const data = await axiosInstance.post(
             "/api/v1/open/calculate-bill?request-id=1234",
             formattedData
           );
-          if (response.status === 200) {
+          if (data) {
             setLoading(false);
-            const responseData = response?.data;
-            const updatedCart = [responseData];
+            const updatedCart = [data];
+            console.log("Updated Cart:", updatedCart);
             localStorage.setItem("cart", JSON.stringify(updatedCart));
 
             Swal.fire({
               icon: "success",
               title: "Added to Cart",
-              text: `${responseData.items[0].product_name?.slice(
-                0,
-                15
-              )} has been added to your cart.`,
+              text: `${data.items[0].product_name?.slice(0, 15)} has been added to your cart.`,
               toast: true,
               position: "top-start",
               showConfirmButton: false,
@@ -146,6 +140,7 @@ export function ProductImageGallery({ currentImages, currentVideos, currentQuant
         const matchSku = existingCartArray?.some((cart) =>
           cart?.items?.some((item) => item.inventory_id === id)
         );
+        console.log("hi");
 
         if (matchSku) {
           Swal.fire({
@@ -236,7 +231,7 @@ export function ProductImageGallery({ currentImages, currentVideos, currentQuant
           )}
 
           <button
-            onClick={() => handleAddToCart()}
+            onClick={handleAddToCart}
             className="w-full transform cursor-pointer rounded-lg bg-[#317ff3] px-6 py-[6px] text-center text-base font-semibold text-white shadow-lg transition-all hover:scale-105 hover:bg-[#31b2f3] md:py-3 md:text-lg">
             {loading ? "Adding to Cart" : "Add To Cart"}
           </button>
