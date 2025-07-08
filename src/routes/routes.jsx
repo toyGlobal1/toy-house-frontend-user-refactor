@@ -7,11 +7,14 @@ import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 import BrandProductsPage from "../pages/BrandProductsPage";
 import CategoryProductsPage from "../pages/CategoryProductsPage";
+import CheckoutPage from "../pages/CheckoutPage";
+import ComboOfferPage from "../pages/ComboOfferPage";
 import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
 import ProductDetailsPage from "../pages/ProductDetailsPage";
 import ProductPage from "../pages/ProductPage";
 import ProfilePage from "../pages/ProfilePage";
+import WholesalePage from "../pages/WholesalePage";
 import AuthRoute from "./AuthRoute";
 import PrivateRoute from "./PrivateRoute";
 
@@ -42,6 +45,9 @@ export const router = createBrowserRouter([
       { path: "brand/:id", Component: BrandProductsPage },
       { path: "age-group", Component: AgeGroupProductsPage },
       { path: "about", Component: AboutPage },
+      { path: "checkout", Component: CheckoutPage },
+      { path: "combo-offer", Component: ComboOfferPage },
+      { path: "wholesale", Component: WholesalePage },
     ],
   },
 ]);

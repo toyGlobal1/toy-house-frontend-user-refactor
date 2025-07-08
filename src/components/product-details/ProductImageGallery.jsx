@@ -18,7 +18,7 @@ export function ProductImageGallery({
 }) {
   const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const visibleItems = 5;
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -307,7 +307,7 @@ export function ProductImageGallery({
           )}
         </div>
       </div>
-      <ShoppingCartDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
+      <ShoppingCartDrawer isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
     </div>
   );
 }

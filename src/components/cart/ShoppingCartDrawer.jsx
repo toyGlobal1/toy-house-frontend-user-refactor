@@ -1,6 +1,7 @@
 import { Button, Drawer, DrawerBody, DrawerContent, DrawerHeader } from "@heroui/react";
 
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { LuMinus, LuPlus, LuX } from "react-icons/lu";
 import { useNavigate } from "react-router";
 import { CART_KEY } from "../../constants/query-key";
@@ -12,7 +13,7 @@ export function ShoppingCartDrawer({ isOpen, onOpenChange, onClose }) {
   return (
     <Drawer isOpen={isOpen} onOpenChange={onOpenChange} placement="right">
       <DrawerContent>
-        <DrawerHeader className="flex flex-col gap-1">Cart</DrawerHeader>
+        <DrawerHeader className="flex flex-col gap-1">Shopping Cart</DrawerHeader>
         <DrawerBody>
           <ShoppingCart onClose={onClose} />
         </DrawerBody>
@@ -31,94 +32,28 @@ function ShoppingCart({ onClose }) {
   });
   const navigate = useNavigate();
 
-  // const totalPrice = useMemo(() => {
-  //   if (isAuthenticated) {
-  //     return cart ? cart.sub_total : 0;
-  //   } else {
-  //     return existingCart?.reduce((acc, cartEntry) => {
-  //       return (
-  //         acc +
-  //         (cartEntry?.items?.reduce(
-  //           (subTotal, item) =>
-  //             subTotal + (parseFloat(item.selling_price) || 0) * (item.quantity || 1),
-  //           0
-  //         ) || 0)
-  //       );
-  //     }, 0);
-  //   }
-  // }, [isAuthenticated, cart]);
+  const subtotal = useMemo(() => {
+    if (cart.length) {
+      return cart.reduce((acc, item) => acc + (item.selling_price * item.quantity || 0), 0);
+    }
+    return 0;
+  }, [cart]);
 
-  // const handleCheckout = async () => {
-  //   if (isAuthenticated) {
-  //     if (!cart || cart.length === 0) {
-  //       Swal.fire({
-  //         toast: true,
-  //         position: "top-start",
-  //         icon: "error",
-  //         title: "Your cart is empty",
-  //         showConfirmButton: false,
-  //         timer: 3000,
-  //       });
-  //       return; // Prevent the order from being submitted
-  //     }
-  //     setCheckoutLoading(true);
-  //     onClose();
-  //     // Simulate checkout process
-  //     setTimeout(() => {
-  //       navigate("/checkout");
-  //     }, 1000);
-  //   } else {
-  //     if (!existingCart || existingCart.length === 0) {
-  //       Swal.fire({
-  //         toast: true,
-  //         position: "top-start",
-  //         icon: "error",
-  //         title: "Your cart is empty",
-  //         showConfirmButton: false,
-  //         timer: 3000,
-  //       });
-  //       return;
-  //     }
-
-  //     const formattedData = {
-  //       items: existingCart.flatMap((cartItem) =>
-  //         cartItem.items.map((item) => ({
-  //           product_inventory_id: item.inventory_id,
-  //           quantity: item.quantity,
-  //         }))
-  //       ),
-  //     };
-
-  //     try {
-  //       const response = await axiosInstance.post(
-  //         "/api/v1/open/calculate-bill?request-id=1234",
-  //         formattedData
-  //       );
-  //       if (response.status === 200) {
-  //         const responseData = response?.data;
-  //         const updatedCart = [responseData];
-  //         localStorage.setItem("checkout", JSON.stringify(updatedCart));
-  //         setCheckoutLoading(true);
-  //         onClose();
-  //         navigate("/checkout");
-  //         window.location.reload();
-  //       }
-  //     } catch (error) {
-  //       console.error("Error adding product to cart:", error);
-  //     }
-  //   }
-  // };
+  const handleCheckout = () => {
+    onClose();
+    navigate("/checkout");
+  };
 
   return (
-    <div>
-      <div className="flex flex-col gap-1">
+    <div className="flex h-full flex-col">
+      <div className="flex flex-1 flex-col gap-1">
         {cart.length ? (
           cart.map((cartItem) => (
             <div key={cartItem.id} className="flex items-center gap-2 border-b pb-1">
               <img
                 src={cartItem.image_url}
                 alt={cartItem.product_name}
-                className="size-16 rounded-md border object-cover"
+                className="size-16 rounded-md border"
               />
               <div className="flex-1">
                 <div className="flex items-center justify-between">
@@ -153,7 +88,19 @@ function ShoppingCart({ onClose }) {
           <p className="text-center font-medium text-gray-500">Your cart is empty</p>
         )}
       </div>
-      <Button>Checkout</Button>
+      {cart.length > 0 && (
+        <div>
+          <div>
+            <p className="text-sm font-medium">
+              Subtotal <span className="text-gray-500">(Shipping not included)</span>
+            </p>
+            <p className="text-lg font-bold">BDT {subtotal}</p>
+          </div>
+          <Button className="mt-2 w-full" onPress={handleCheckout}>
+            Checkout
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

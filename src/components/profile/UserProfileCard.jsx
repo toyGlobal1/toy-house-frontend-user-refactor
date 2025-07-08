@@ -1,19 +1,12 @@
 import { Button, Card, CardBody, CardHeader, Input, Textarea } from "@heroui/react";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { LuLogOut } from "react-icons/lu";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
 import { removeAuthToken } from "../../lib/auth-token.util";
-import { getUserProfile } from "../../service/auth.service";
 
-export function UserProfileCard() {
+export function UserProfileCard({ user }) {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuth();
-
-  const { data: user } = useSuspenseQuery({
-    queryKey: ["userProfile"],
-    queryFn: getUserProfile,
-  });
 
   const handleLogout = () => {
     removeAuthToken();

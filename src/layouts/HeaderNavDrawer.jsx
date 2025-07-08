@@ -4,6 +4,7 @@ import {
   DrawerBody,
   DrawerContent,
   DrawerHeader,
+  Spinner,
   useDisclosure,
 } from "@heroui/react";
 import { useQueries } from "@tanstack/react-query";
@@ -27,7 +28,11 @@ export function HeaderNavDrawer() {
 
   return (
     <>
-      <Button size="sm" isIconOnly onPress={onOpen} className="md:hidden">
+      <Button
+        size="sm"
+        isIconOnly
+        onPress={onOpen}
+        className="border-2 border-yellow-300 bg-transparent md:hidden">
         <LuMenu className="size-4" />
       </Button>
       <Drawer isOpen={isOpen} onOpenChange={onOpenChange} placement="left">

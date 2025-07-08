@@ -1,12 +1,13 @@
 import { Spinner } from "@heroui/react";
 import { Suspense } from "react";
-import { Outlet } from "react-router";
+import { Outlet, ScrollRestoration } from "react-router";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 
 export default function RootLayout() {
   return (
     <>
+      <ScrollRestoration />
       <Header />
       <main className="min-h-screen">
         <Suspense

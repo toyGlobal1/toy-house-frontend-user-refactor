@@ -9,7 +9,7 @@ import { HeaderNavDrawer } from "./HeaderNavDrawer";
 import { HeaderNavigationMenu } from "./HeaderNavigationMenu";
 
 export function Header() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const { isAuthenticated } = useAuth();
 
   return (
@@ -37,7 +37,7 @@ export function Header() {
           </div>
         </div>
       </header>
-      <ShoppingCartDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
+      <ShoppingCartDrawer isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
     </>
   );
 }

@@ -2,6 +2,13 @@ import { z } from "zod";
 
 const phoneRegex = new RegExp(/^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/);
 
+export const phoneZodSchema = z
+  .string()
+  .min(1, "Phone number is required")
+  .min(11, "Invalid phone number")
+  .max(15, "Invalid phone number")
+  .regex(phoneRegex, "Invalid phone number");
+
 export const loginZodSchema = z.object({
   username: z
     .string()
