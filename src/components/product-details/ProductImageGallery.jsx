@@ -2,24 +2,30 @@ import { useDisclosure } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import Swal from "sweetalert2";
 import { CART_KEY } from "../../constants/query-key";
 import { useAuth } from "../../hooks/useAuth";
-import { axiosInstance } from "../../lib/axios.config";
+import { useCart } from "../../hooks/useCart";
 import { getUserCart } from "../../service/cart.service";
 import { ShoppingCartDrawer } from "../cart/ShoppingCartDrawer";
 import { ProductImageZoom } from "./ProductImageZoom";
 
-export function ProductImageGallery({ currentImages, currentVideos, currentQuantity, id, sku }) {
+export function ProductImageGallery({
+  currentImages,
+  currentVideos,
+  displayImageUrl,
+  name,
+  selectedInventory,
+}) {
   const { isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const visibleItems = 5;
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const { data: cart } = useQuery({
+  const { data } = useQuery({
     queryKey: [CART_KEY],
-    queryFn: () => getUserCart(),
+    queryFn: getUserCart,
     enabled: isAuthenticated,
   });
 
@@ -51,156 +57,170 @@ export function ProductImageGallery({ currentImages, currentVideos, currentQuant
   };
 
   const handleAddToCart = async () => {
-    if (currentQuantity === 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Out of Stock",
-        text: "Sorry, this product is currently out of stock.",
-        confirmButtonText: "OK",
-      });
+    if (!selectedInventory || !selectedInventory.product_inventory_id) {
+      console.error("Selected inventory is not available.");
       return;
     }
+    const item = {
+      id: selectedInventory.product_inventory_id,
+      quantity: 1,
+      product_name: name,
+      image_url: displayImageUrl,
+      color_name: selectedInventory.color,
+      base_price: selectedInventory.base_price,
+      selling_price: selectedInventory.selling_price,
+    };
+    addToCart(item);
+    // if (currentQuantity === 0) {
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: "Out of Stock",
+    //     text: "Sorry, this product is currently out of stock.",
+    //     confirmButtonText: "OK",
+    //   });
+    //   return;
+    // }
 
-    if (isAuthenticated) {
-      setLoading(true);
-      const formattedData = {
-        items:
-          Array.isArray(cart?.items) && cart.items.length > 0
-            ? [
-                ...cart.items.map((item) => ({
-                  product_inventory_id: Number(item.inventory_id),
-                  quantity: Number(item.quantity),
-                })),
-                {
-                  product_inventory_id: Number(id), // Assuming `id` is defined elsewhere
-                  quantity: 1,
-                },
-              ]
-            : [
-                {
-                  product_inventory_id: Number(id), // Assuming `id` is defined elsewhere
-                  quantity: 1,
-                },
-              ],
-      };
+    // if (isAuthenticated) {
+    //   setLoading(true);
+    //   const formattedData = {
+    //     items:
+    //       Array.isArray(cart?.items) && cart.items.length > 0
+    //         ? [
+    //             ...cart.items.map((item) => ({
+    //               product_inventory_id: Number(item.inventory_id),
+    //               quantity: Number(item.quantity),
+    //             })),
+    //             {
+    //               product_inventory_id: Number(id), // Assuming `id` is defined elsewhere
+    //               quantity: 1,
+    //             },
+    //           ]
+    //         : [
+    //             {
+    //               product_inventory_id: Number(id), // Assuming `id` is defined elsewhere
+    //               quantity: 1,
+    //             },
+    //           ],
+    //   };
 
-      try {
-        const response = await axiosInstance.post(
-          "/api/v1/open/calculate-bill?request-id=1234",
-          formattedData
-        );
-        console.log(response);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error adding product to cart:", error);
-      }
-    } else {
-      const existingCartArray = JSON.parse(localStorage.getItem("cart") || "[]");
+    //   try {
+    //     const response = await axiosInstance.post(
+    //       "/api/v1/open/calculate-bill?request-id=1234",
+    //       formattedData
+    //     );
+    //     console.log(response);
+    //     setLoading(false);
+    //   } catch (error) {
+    //     console.error("Error adding product to cart:", error);
+    //   }
+    // } else {
+    //   const existingCartArray = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      if (existingCartArray.length === 0) {
-        setLoading(true);
-        const formattedData = {
-          items: [
-            {
-              product_inventory_id: Number(id),
-              quantity: 1,
-            },
-          ],
-        };
+    //   if (existingCartArray.length === 0) {
+    //     setLoading(true);
+    //     const formattedData = {
+    //       items: [
+    //         {
+    //           product_inventory_id: Number(id),
+    //           quantity: 1,
+    //         },
+    //       ],
+    //     };
 
-        console.log(formattedData);
+    //     console.log(formattedData);
 
-        try {
-          const data = await axiosInstance.post(
-            "/api/v1/open/calculate-bill?request-id=1234",
-            formattedData
-          );
-          if (data) {
-            setLoading(false);
-            const updatedCart = [data];
-            console.log("Updated Cart:", updatedCart);
-            localStorage.setItem("cart", JSON.stringify(updatedCart));
+    //     try {
+    //       const data = await axiosInstance.post(
+    //         "/api/v1/open/calculate-bill?request-id=1234",
+    //         formattedData
+    //       );
+    //       if (data) {
+    //         setLoading(false);
+    //         const updatedCart = [data];
+    //         console.log("Updated Cart:", updatedCart);
+    //         localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-            Swal.fire({
-              icon: "success",
-              title: "Added to Cart",
-              text: `${data.items[0].product_name?.slice(0, 15)} has been added to your cart.`,
-              toast: true,
-              position: "top-start",
-              showConfirmButton: false,
-              timer: 2500,
-              timerProgressBar: true,
-            });
-          }
-        } catch (error) {
-          console.error("Error adding product to cart:", error);
-        }
-      } else {
-        // Check if any item in the cart has the same SKU
-        const matchSku = existingCartArray?.some((cart) =>
-          cart?.items?.some((item) => item.inventory_id === id)
-        );
-        console.log("hi");
+    //         Swal.fire({
+    //           icon: "success",
+    //           title: "Added to Cart",
+    //           text: `${data.items[0].product_name?.slice(0, 15)} has been added to your cart.`,
+    //           toast: true,
+    //           position: "top-start",
+    //           showConfirmButton: false,
+    //           timer: 2500,
+    //           timerProgressBar: true,
+    //         });
+    //       }
+    //     } catch (error) {
+    //       console.error("Error adding product to cart:", error);
+    //     }
+    //   } else {
+    //     // Check if any item in the cart has the same SKU
+    //     const matchSku = existingCartArray?.some((cart) =>
+    //       cart?.items?.some((item) => item.inventory_id === id)
+    //     );
+    //     console.log("hi");
 
-        if (matchSku) {
-          Swal.fire({
-            icon: "error",
-            title: "Product already here!",
-            text: "This product is already in the cart",
-            confirmButtonText: "OK",
-          });
-          return;
-        } else {
-          setLoading(true);
-          const formattedData = {
-            items: [
-              ...(Array.isArray(existingCartArray) && existingCartArray.length > 0
-                ? existingCartArray.flatMap((cart) =>
-                    Array.isArray(cart.items)
-                      ? cart.items.map((item) => ({
-                          product_inventory_id: Number(item.inventory_id),
-                          quantity: item.quantity,
-                        }))
-                      : []
-                  )
-                : []),
-              {
-                product_inventory_id: Number(id),
-                quantity: 1,
-              },
-            ],
-          };
-          try {
-            const response = await axiosInstance.post(
-              "/api/v1/open/calculate-bill?request-id=1234",
-              formattedData
-            );
-            if (response.status === 200) {
-              setLoading(false);
-              const responseData = response?.data;
+    //     if (matchSku) {
+    //       Swal.fire({
+    //         icon: "error",
+    //         title: "Product already here!",
+    //         text: "This product is already in the cart",
+    //         confirmButtonText: "OK",
+    //       });
+    //       return;
+    //     } else {
+    //       setLoading(true);
+    //       const formattedData = {
+    //         items: [
+    //           ...(Array.isArray(existingCartArray) && existingCartArray.length > 0
+    //             ? existingCartArray.flatMap((cart) =>
+    //                 Array.isArray(cart.items)
+    //                   ? cart.items.map((item) => ({
+    //                       product_inventory_id: Number(item.inventory_id),
+    //                       quantity: item.quantity,
+    //                     }))
+    //                   : []
+    //               )
+    //             : []),
+    //           {
+    //             product_inventory_id: Number(id),
+    //             quantity: 1,
+    //           },
+    //         ],
+    //       };
+    //       try {
+    //         const response = await axiosInstance.post(
+    //           "/api/v1/open/calculate-bill?request-id=1234",
+    //           formattedData
+    //         );
+    //         if (response.status === 200) {
+    //           setLoading(false);
+    //           const responseData = response?.data;
 
-              const updatedCart = [responseData];
-              localStorage.setItem("cart", JSON.stringify(updatedCart));
-              Swal.fire({
-                icon: "success",
-                title: "Added to Cart",
-                text: `${responseData.items[0].product_name?.slice(
-                  0,
-                  15
-                )} has been added to your cart.`,
-                toast: true,
-                position: "top-start",
-                showConfirmButton: false,
-                timer: 2500,
-                timerProgressBar: true,
-              });
-            }
-          } catch (error) {
-            console.error("Error adding product to cart:", error);
-          }
-        }
-      }
-    }
+    //           const updatedCart = [responseData];
+    //           localStorage.setItem("cart", JSON.stringify(updatedCart));
+    //           Swal.fire({
+    //             icon: "success",
+    //             title: "Added to Cart",
+    //             text: `${responseData.items[0].product_name?.slice(
+    //               0,
+    //               15
+    //             )} has been added to your cart.`,
+    //             toast: true,
+    //             position: "top-start",
+    //             showConfirmButton: false,
+    //             timer: 2500,
+    //             timerProgressBar: true,
+    //           });
+    //         }
+    //       } catch (error) {
+    //         console.error("Error adding product to cart:", error);
+    //       }
+    //     }
+    //   }
+    // }
     onOpen(); // Open the shopping cart drawer after adding to cart
   };
 

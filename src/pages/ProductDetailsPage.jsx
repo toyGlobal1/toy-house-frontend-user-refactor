@@ -8,7 +8,7 @@ import {
   CardHeader,
 } from "@heroui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 import Editor from "../components/editor/Editor";
 import { CustomerReviews } from "../components/product-details/CustomerReviews";
@@ -32,8 +32,6 @@ export default function ProductDetailsPage() {
   const [selectedImage, setSelectedImage] = useState(currentImages[0] || null);
   const [selectedVideos, setSelectedVideos] = useState(currentVideos[0] || null);
 
-  console.log(selectedInventory);
-
   const descriptionRef = useRef(null);
 
   const handleImageClick = (imageUrl) => {
@@ -52,6 +50,18 @@ export default function ProductDetailsPage() {
     setSelectedColor(inventory.color);
   };
 
+  useEffect(() => {
+    if (data && data.product_inventory && data.product_inventory.length > 0) {
+      const initialInventory = data.product_inventory[0];
+      setSelectedInventory(initialInventory);
+      setCurrentImages(initialInventory.product_images || []);
+      setCurrentVideos(initialInventory.product_videos || []);
+      setSelectedImage(initialInventory.product_images[0]?.image_url || null);
+      setSelectedVideos(initialInventory.product_videos[0]?.video_url || null);
+      setSelectedColor(initialInventory.color);
+    }
+  }, [data]);
+
   return (
     <div className="container mb-5 mt-1 space-y-5">
       <Breadcrumbs>
@@ -66,15 +76,15 @@ export default function ProductDetailsPage() {
 
       <div className="flex flex-col gap-10 md:flex-row">
         <ProductImageGallery
-          id={selectedInventory.product_inventory_id}
           currentImages={currentImages}
           selectedImage={selectedImage}
           currentVideos={currentVideos}
           selectedVideos={selectedVideos}
           handleImageClick={handleImageClick}
           handleVideoClick={handleVideoClick}
-          currentQuantity={selectedInventory.quantity}
-          sku={data.sku}
+          selectedInventory={selectedInventory}
+          displayImageUrl={data.display_image_url}
+          name={data.product_name}
         />
         <div className="flex w-full flex-col space-y-3 md:space-y-4 lg:flex-1">
           <div className="flex flex-col">

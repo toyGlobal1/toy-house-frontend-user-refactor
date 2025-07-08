@@ -6,6 +6,7 @@ import { AuthProvider } from "./contexts/AuthProvider.jsx";
 import { TanstackQueryProvider } from "./contexts/TanstackQueryProvider.jsx";
 import { router } from "./routes/routes.jsx";
 
+import { CartProvider } from "./contexts/CartProvider.jsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
@@ -14,7 +15,9 @@ createRoot(document.getElementById("root")).render(
       <ToastProvider placement="top-center" />
       <TanstackQueryProvider>
         <AuthProvider>
-          <RouterProvider router={router} />
+          <CartProvider>
+            <RouterProvider router={router} />
+          </CartProvider>
         </AuthProvider>
       </TanstackQueryProvider>
     </HeroUIProvider>
