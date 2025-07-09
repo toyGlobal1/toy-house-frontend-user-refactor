@@ -11,6 +11,7 @@ import CheckoutPage from "../pages/CheckoutPage";
 import ComboOfferPage from "../pages/ComboOfferPage";
 import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
+import PrivacyPage from "../pages/PrivacyPage";
 import ProductDetailsPage from "../pages/ProductDetailsPage";
 import ProductPage from "../pages/ProductPage";
 import ProfilePage from "../pages/ProfilePage";
@@ -43,11 +44,12 @@ export const router = createBrowserRouter([
       { path: "products/:id", Component: ProductDetailsPage },
       { path: "category/:id", Component: CategoryProductsPage },
       { path: "brand/:id", Component: BrandProductsPage },
-      { path: "age-group", Component: AgeGroupProductsPage },
-      { path: "about", Component: AboutPage },
-      { path: "checkout", Component: CheckoutPage },
       { path: "combo-offer", Component: ComboOfferPage },
       { path: "wholesale", Component: WholesalePage },
+      { path: "age-group", Component: AgeGroupProductsPage },
+      { path: "about", Component: AboutPage },
+      { path: "privacy", Component: PrivacyPage },
+      { path: "checkout", Component: CheckoutPage },
     ],
   },
 ]);

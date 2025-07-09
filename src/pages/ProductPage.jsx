@@ -1,6 +1,6 @@
-import { Button, Select, SelectItem, Spinner } from "@heroui/react";
+import { Button, Pagination, Select, SelectItem, Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductCard } from "../components/product/ProductCard";
 import { ProductFilter } from "../components/product/ProductFilter";
 import { ProductFilterDrawer } from "../components/product/ProductFilterDrawer";
@@ -15,11 +15,30 @@ export default function ProductPage() {
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState([0, Infinity]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState([0, Infinity]);
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 20;
 
-  const { data, isFetching } = useQuery({ queryKey: [PRODUCT_KEY], queryFn: getAllProducts });
+  const [products, setProducts] = useState([]);
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["40-products"],
+    queryFn: () => getAllProducts({ size: 20 }),
+  });
+
+  const { data: allProducts } = useQuery({
+    queryKey: [PRODUCT_KEY],
+    queryFn: getAllProducts,
+  });
+
+  useEffect(() => {
+    if (allProducts?.products) {
+      setProducts(allProducts.products);
+    } else if (data?.products) {
+      setProducts(data.products);
+    }
+  }, [data, allProducts]);
 
   const filteredProducts = useMemo(() => {
-    const products = data?.products || [];
     let filtered = products.filter((item) => {
       // Match brand if a brand is selected, otherwise allow all
       const matchesBrand = !selectedBrand || item?.brand_name === selectedBrand;
@@ -55,7 +74,7 @@ export default function ProductPage() {
 
     return filtered;
   }, [
-    data,
+    products,
     searchTerm,
     selectedBrand,
     selectedCategory,
@@ -63,6 +82,19 @@ export default function ProductPage() {
     selectedPriceRange,
     sortOrder,
   ]);
+
+  // Calculate total pages based on filtered products and rows per page
+  const pages = filteredProducts.length ? Math.ceil(filteredProducts.length / rowsPerPage) : 1;
+
+  // Calculate items for the current page
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    window.scrollTo(0, 0); // Scroll to top when page changes
+
+    return filteredProducts.slice(start, end);
+  }, [page, filteredProducts]);
 
   return (
     <div className="container my-5">
@@ -124,11 +156,24 @@ export default function ProductPage() {
             <div className="flex h-64 items-center justify-center">
               <Spinner label="Loading products..." />
             </div>
-          ) : filteredProducts.length ? (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+          ) : items.length ? (
+            <div>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {items.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              <div className="mt-4 flex justify-center">
+                <Pagination
+                  isCompact
+                  showControls
+                  showShadow
+                  color="default"
+                  page={page}
+                  total={pages}
+                  onChange={(page) => setPage(page)}
+                />
+              </div>
             </div>
           ) : (
             <div className="mt-10 text-center text-lg font-medium text-gray-500">

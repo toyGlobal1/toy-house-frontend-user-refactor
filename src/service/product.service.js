@@ -1,7 +1,9 @@
 import { axiosInstance } from "../lib/axios.config";
 
-export const getAllProducts = async () => {
-  return await axiosInstance.get("/api/v1/open/products/get/all?page=0&size=5000&request-id=1234");
+export const getAllProducts = async ({ size = 5000 }) => {
+  return await axiosInstance.get(
+    `/api/v1/open/products/get/all?page=0&size=${size}&request-id=1234`
+  );
 };
 
 export const getAllFeaturedProducts = async () => {

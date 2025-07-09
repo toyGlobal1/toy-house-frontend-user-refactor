@@ -45,7 +45,7 @@ export function TopCategories() {
           {categories?.map((category) => (
             <SwiperSlide key={category.category_id}>
               <div key={category.category_id}>
-                <Link to={`/categoryDetail/${category.category_id}`} className="block">
+                <Link to={`/category/${category.category_id}`} className="block">
                   <div className="group flex flex-col items-center justify-center rounded-full bg-transparent">
                     <img
                       src={category.category_logo_url || ""}

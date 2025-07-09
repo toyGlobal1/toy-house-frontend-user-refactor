@@ -56,7 +56,7 @@ export function NewArrival() {
           className="mySwiper">
           {newProducts?.map((item) => (
             <SwiperSlide key={item.id} className="mb-2 rounded-lg shadow">
-              <Link to={`/productDetail/${item.id}`}>
+              <Link to={`/products/${item.id}`}>
                 <ProductHomeCard product={item} />
               </Link>
             </SwiperSlide>

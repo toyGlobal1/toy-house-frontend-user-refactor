@@ -45,7 +45,7 @@ export function TopBrands() {
           {brands?.map((brand) => (
             <SwiperSlide key={brand.brand_id}>
               <div key={brand.brand_id}>
-                <Link to={`/brandDetail/${brand.brand_id}`} className="block">
+                <Link to={`/brand/${brand.brand_id}`} className="block">
                   <div className="group flex flex-col items-center justify-center rounded-full bg-transparent">
                     <img
                       src={brand.brand_logo_url || ""}

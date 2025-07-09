@@ -96,7 +96,7 @@ function ShoppingCart({ onClose }) {
             </p>
             <p className="text-lg font-bold">BDT {subtotal}</p>
           </div>
-          <Button className="mt-2 w-full" onPress={handleCheckout}>
+          <Button color="primary" className="mt-2 w-full" onPress={handleCheckout}>
             Checkout
           </Button>
         </div>

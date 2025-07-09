@@ -194,7 +194,7 @@ function ProductDetailsAccordion({ highlights, dimensions, inTheBox }) {
   const inTheBoxRef = useRef(null);
 
   return (
-    <Accordion isCompact className="rounded-lg border-2" defaultSelectedKeys={["1"]}>
+    <Accordion isCompact defaultSelectedKeys={["1"]}>
       <AccordionItem key="1" aria-label="highlights" title="Highlights">
         {highlights ? (
           <Editor ref={highlightsRef} defaultValue={highlights} readOnly={true} />

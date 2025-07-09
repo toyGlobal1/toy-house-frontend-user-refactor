@@ -54,9 +54,11 @@ export function Footer() {
         </div>
       </div>
       <div className="mx-auto flex w-4/5 flex-col items-center justify-between border-t-2 border-solid border-black pb-10 pt-5 sm:flex-row">
-        <h1 className="font-roboto text-sm">© 2024 Toy House. All rights reserved.</h1>
+        <h1 className="font-roboto text-sm">
+          © {new Date().getFullYear()} Toy House. All rights reserved.
+        </h1>
         <div className="flex items-center justify-center gap-3 max-sm:mt-5 max-sm:flex-col sm:gap-5">
-          <Link to="/privacyPolicy">
+          <Link to="/privacy">
             <h1 className="font-roboto text-sm">Privacy Policy</h1>
           </Link>
           <h1 className="font-roboto text-sm">Terms of Service</h1>

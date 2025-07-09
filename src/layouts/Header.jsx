@@ -1,6 +1,6 @@
 import { useDisclosure } from "@heroui/react";
 import { FaUserCircle } from "react-icons/fa";
-import { FaCartShopping, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaCartShopping } from "react-icons/fa6";
 import { Link } from "react-router";
 import { ShoppingCartDrawer } from "../components/cart/ShoppingCartDrawer";
 import { Logo } from "../components/Logo";
@@ -22,7 +22,6 @@ export function Header() {
           </Link>
           <HeaderNavigationMenu />
           <div className="flex items-center gap-5">
-            <FaMagnifyingGlass className="size-4" />
             <button onClick={onOpen}>
               <FaCartShopping className="size-4" />
             </button>
