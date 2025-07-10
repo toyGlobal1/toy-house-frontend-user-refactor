@@ -5,7 +5,6 @@ import { NewArrival } from "../components/home/NewArrival";
 import { ShopByAge } from "../components/home/ShopByAge";
 import { Support } from "../components/home/Support";
 import { Testimonial } from "../components/home/Testimonial";
-import { TopBrands } from "../components/home/TopBrands";
 import { TopCategories } from "../components/home/TopCategories";
 
 export default function HomePage() {
@@ -18,9 +17,9 @@ export default function HomePage() {
         </Suspense>
         <ShopByAge />
         <Support />
-        <Suspense fallback={<div>Loading...</div>}>
+        {/* <Suspense fallback={<div>Loading...</div>}>
           <TopBrands />
-        </Suspense>
+        </Suspense> */}
         <Suspense fallback={<div>Loading...</div>}>
           <NewArrival />
         </Suspense>

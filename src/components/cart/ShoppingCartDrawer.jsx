@@ -1,13 +1,9 @@
 import { Button, Drawer, DrawerBody, DrawerContent, DrawerHeader } from "@heroui/react";
 
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { LuMinus, LuPlus, LuX } from "react-icons/lu";
 import { useNavigate } from "react-router";
-import { CART_KEY } from "../../constants/query-key";
-import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../hooks/useCart";
-import { getUserCart } from "../../service/cart.service";
 
 export function ShoppingCartDrawer({ isOpen, onOpenChange, onClose }) {
   return (
@@ -23,14 +19,8 @@ export function ShoppingCartDrawer({ isOpen, onOpenChange, onClose }) {
 }
 
 function ShoppingCart({ onClose }) {
-  const { isAuthenticated } = useAuth();
-  const { cart, increaseItemQuantity, decreaseItemQuantity, removeFromCart } = useCart();
-  const { data: cartData } = useQuery({
-    queryKey: [CART_KEY],
-    queryFn: getUserCart,
-    enabled: isAuthenticated,
-  });
   const navigate = useNavigate();
+  const { cart, increaseItemQuantity, decreaseItemQuantity, removeFromCart } = useCart();
 
   const subtotal = useMemo(() => {
     if (cart.length) {
