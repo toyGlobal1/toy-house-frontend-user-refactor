@@ -71,7 +71,7 @@ export default function ProductDetailsPage() {
         <BreadcrumbItem underline="hover">
           <Link to={`/category/${data.category.category_id}`}>{data.category.name}</Link>
         </BreadcrumbItem>
-        <BreadcrumbItem>{data.product_name}</BreadcrumbItem>
+        <BreadcrumbItem className="line-clamp-1">{data.product_name}</BreadcrumbItem>
       </Breadcrumbs>
 
       <div className="flex flex-col gap-10 md:flex-row">
