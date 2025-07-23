@@ -1,11 +1,9 @@
-import { useDisclosure } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Button, useDisclosure } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { CART_KEY } from "../../constants/query-key";
-import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router";
+import { useBuyNow } from "../../hooks/useBuyNow";
 import { useCart } from "../../hooks/useCart";
-import { getUserCart } from "../../service/cart.service";
 import { ShoppingCartDrawer } from "../cart/ShoppingCartDrawer";
 import { ProductImageZoom } from "./ProductImageZoom";
 
@@ -16,18 +14,20 @@ export function ProductImageGallery({
   name,
   selectedInventory,
 }) {
-  const { isAuthenticated } = useAuth();
+  // const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { addToBuyNow } = useBuyNow();
   const { addToCart } = useCart();
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const visibleItems = 5;
   const [startIndex, setStartIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
-  const { data } = useQuery({
-    queryKey: [CART_KEY],
-    queryFn: getUserCart,
-    enabled: isAuthenticated,
-  });
+  // const { data } = useQuery({
+  //   queryKey: [CART_KEY],
+  //   queryFn: getUserCart,
+  //   enabled: isAuthenticated,
+  // });
 
   // Set default selected image and video
   const [currentSelectedImage, setCurrentSelectedImage] = useState(
@@ -54,6 +54,34 @@ export function ProductImageGallery({
     if (startIndex > 0) {
       setStartIndex(startIndex - 1);
     }
+  };
+
+  const handleImageThumbnailClick = (imageUrl) => {
+    setCurrentSelectedImage(imageUrl);
+    setCurrentSelectedVideo(""); // Clear video selection
+  };
+
+  const handleVideoThumbnailClick = (videoUrl) => {
+    setCurrentSelectedVideo(videoUrl); // Set the selected video URL
+    setCurrentSelectedImage(""); // Clear image selection
+  };
+
+  const handleBuyNow = () => {
+    if (!selectedInventory || !selectedInventory.product_inventory_id) {
+      console.error("Selected inventory is not available.");
+      return;
+    }
+    const item = {
+      id: selectedInventory.product_inventory_id,
+      quantity: 1,
+      product_name: name,
+      image_url: displayImageUrl,
+      color_name: selectedInventory.color,
+      base_price: selectedInventory.base_price,
+      selling_price: selectedInventory.selling_price,
+    };
+    addToBuyNow(item);
+    navigate("/checkout?action=buyNow");
   };
 
   const handleAddToCart = async () => {
@@ -224,16 +252,6 @@ export function ProductImageGallery({
     onOpen(); // Open the shopping cart drawer after adding to cart
   };
 
-  const handleImageThumbnailClick = (imageUrl) => {
-    setCurrentSelectedImage(imageUrl);
-    setCurrentSelectedVideo(""); // Clear video selection
-  };
-
-  const handleVideoThumbnailClick = (videoUrl) => {
-    setCurrentSelectedVideo(videoUrl); // Set the selected video URL
-    setCurrentSelectedImage(""); // Clear image selection
-  };
-
   return (
     <div>
       <div className="flex flex-row-reverse justify-evenly gap-5 lg:items-center">
@@ -250,11 +268,18 @@ export function ProductImageGallery({
             </div>
           )}
 
-          <button
-            onClick={handleAddToCart}
-            className="w-full transform cursor-pointer rounded-lg bg-[#317ff3] px-6 py-[6px] text-center text-base font-semibold text-white shadow-lg transition-all hover:scale-105 hover:bg-[#31b2f3] md:py-3 md:text-lg">
-            {loading ? "Adding to Cart" : "Add To Cart"}
-          </button>
+          <div className="flex items-center gap-3">
+            <Button radius="sm" color="primary" className="w-full" onPress={handleBuyNow}>
+              Buy now
+            </Button>
+            <Button
+              radius="sm"
+              onPress={handleAddToCart}
+              className="w-full bg-orange-500 text-primary-foreground">
+              Add to Cart
+              {/* {loading ? "Adding to Cart" : "Add to Cart"} */}
+            </Button>
+          </div>
         </div>
 
         {/* Image Thumbnails with Navigation Buttons */}

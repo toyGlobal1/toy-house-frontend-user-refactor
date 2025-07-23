@@ -3,8 +3,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { LuMinus, LuPlus } from "react-icons/lu";
+import { useNavigate, useSearchParams } from "react-router";
 import Swal from "sweetalert2";
+import { useBuyNow } from "../hooks/useBuyNow";
 import { useCart } from "../hooks/useCart";
 import { placeOrder } from "../service/order.service";
 import { orderZodSchema } from "../validations/order.schema";
@@ -76,7 +78,11 @@ const cities = [
 ];
 
 export default function CheckoutPage() {
+  const { buyNow, increaseQuantity, decreaseQuantity } = useBuyNow();
   const { cart, clearCart } = useCart();
+  const [searchParams] = useSearchParams();
+  const isBuyNow = searchParams.get("action") === "buyNow";
+
   const navigate = useNavigate();
 
   const { mutateAsync, isPending } = useMutation({
@@ -105,7 +111,7 @@ export default function CheckoutPage() {
       name: "",
       email: "",
       phone_number: "",
-      city: "",
+      city: "dhaka",
       shipping_address: "",
     },
   });
@@ -114,17 +120,27 @@ export default function CheckoutPage() {
   const shippingCost = city ? (city === "dhaka" ? 60 : 120) : 0;
 
   const subtotal = useMemo(() => {
-    if (cart.length) {
+    if (isBuyNow && buyNow) {
+      return buyNow.selling_price * (buyNow.quantity || 1);
+    } else if (cart.length) {
       return cart.reduce((acc, item) => acc + (item.selling_price * item.quantity || 0), 0);
     }
     return 0;
-  }, [cart]);
+  }, [cart, buyNow, isBuyNow]);
 
   const onSubmit = async (data) => {
-    const items = cart.map((item) => ({
-      product_inventory_id: item.id,
-      quantity: item.quantity,
-    }));
+    const items =
+      isBuyNow && buyNow
+        ? [
+            {
+              product_inventory_id: buyNow.id,
+              quantity: buyNow.quantity,
+            },
+          ]
+        : cart.map((item) => ({
+            product_inventory_id: item.id,
+            quantity: item.quantity,
+          }));
     const payload = {
       items,
       name: data.name,
@@ -159,7 +175,35 @@ export default function CheckoutPage() {
               </tr>
             </thead>
             <tbody>
-              {cart.length > 0 ? (
+              {isBuyNow ? (
+                <tr className="border-b-[2px] border-[#e0e0e0]">
+                  <td className="font-poppins flex space-x-4 px-1 py-4 text-[8px] font-normal sm:px-2 sm:py-5 sm:text-sm md:px-4 md:py-6 md:text-base lg:py-7 lg:text-lg">
+                    <div className="flex flex-col space-y-[2px] md:space-y-2 lg:space-y-3">
+                      <h1 className="font-poppins line-clamp-2 text-sm font-semibold leading-tight sm:text-base md:text-lg">
+                        {buyNow.product_name}
+                      </h1>
+                      <h1 className="font-roboto text-[8px] font-normal sm:text-sm md:text-base">
+                        {buyNow.color_name}
+                      </h1>
+                    </div>
+                  </td>
+                  <td className="font-poppins py-4 text-center text-[10px] font-normal sm:py-5 sm:text-sm md:py-6 md:text-base lg:py-7 lg:text-lg">
+                    <Button size="sm" isIconOnly onPress={() => decreaseQuantity(buyNow.id)}>
+                      <LuMinus className="size-4" />
+                    </Button>
+                    <span className="mx-2">{buyNow.quantity}</span>
+                    <Button size="sm" isIconOnly onPress={() => increaseQuantity(buyNow.id)}>
+                      <LuPlus className="size-4" />
+                    </Button>
+                  </td>
+                  <td className="font-poppins text-nowrap py-4 text-center text-[8px] font-normal sm:py-5 sm:text-sm md:py-6 md:text-base lg:py-7 lg:text-lg">
+                    {buyNow.selling_price} Tk
+                  </td>
+                  <td className="font-poppins text-nowrap py-4 text-center text-[8px] font-normal sm:py-5 sm:text-sm md:py-6 md:text-base lg:py-7 lg:text-lg">
+                    {(buyNow.quantity * buyNow.selling_price).toFixed(2)} Tk
+                  </td>
+                </tr>
+              ) : cart.length > 0 ? (
                 cart.map((item) => (
                   <tr key={item.id} className="border-b-[2px] border-[#e0e0e0]">
                     <td className="font-poppins flex space-x-4 px-1 py-4 text-[8px] font-normal sm:px-2 sm:py-5 sm:text-sm md:px-4 md:py-6 md:text-base lg:py-7 lg:text-lg">

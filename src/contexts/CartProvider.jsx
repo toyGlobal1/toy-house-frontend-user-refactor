@@ -9,5 +9,14 @@ export function CartProvider({ children }) {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
-  return <CartContext.Provider value={{ cart, setCart }}>{children}</CartContext.Provider>;
+  const [buyNow, setBuyNow] = useState(() => {
+    const savedBuyNow = localStorage.getItem("buyNow");
+    return savedBuyNow ? JSON.parse(savedBuyNow) : null;
+  });
+
+  return (
+    <CartContext.Provider value={{ cart, setCart, buyNow, setBuyNow }}>
+      {children}
+    </CartContext.Provider>
+  );
 }
