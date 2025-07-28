@@ -366,7 +366,7 @@ export default function CheckoutPage() {
             color="primary"
             radius="sm"
             isLoading={isPending}
-            isDisabled={isPending || !cart.length}
+            isDisabled={isPending || (!cart.length && !(buyNow && isBuyNow))}
             className="mt-5 w-full font-medium uppercase">
             Place Order
           </Button>
