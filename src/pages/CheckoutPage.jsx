@@ -147,7 +147,7 @@ export default function CheckoutPage() {
       email: data.email,
       phone_number: data.phone_number,
       shipping_address: data.shipping_address,
-      delivery_options: "INSIDE_DHAKA",
+      delivery_options: city === "dhaka" ? "INSIDE_DHAKA" : "OUTSIDE_DHAKA",
     };
     await mutateAsync(payload);
   };
